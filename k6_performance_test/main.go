@@ -8,6 +8,7 @@ import (
 
 //10lac req with 100 thread
 
+
 func main() {
 	r := gin.Default()
 	r.POST("/k6test", func(c *gin.Context) {

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "github.com/umamaheswari76/performance_testing_k6/grpc.k6.test";
+
+package profile;
+
+service GrpcK6TestService{
+    rpc CreateProfile (Profile) returns (ProfileResponse);
+}
+
+message Profile{
+    string Name = 1;
+}
+
+message ProfileResponse{
+    string StringMessage = 1;
+}

@@ -5,13 +5,16 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	//"strings"
 	"time"
+
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const URI = "mongodb://localhost:27017"
+const URI = "mongodb://localhost:27017/?retryWrites=true&connectTimeoutMS=10000"
+
 var mongodb *mongo.Collection
 
 type DbTest struct {
@@ -24,17 +27,17 @@ func main() {
 
 	//setup routes
 	apiClient.POST("/db_test", handleinsert())
+	// apiClient.POST("/db_test_many",handlemany())
 	apiClient.Run(":8000")
 }
 
-//initializing gin router
+// initializing gin router
 func API() *gin.Engine {
 	r := gin.Default()
 	return r
 }
 
-
-//mongodb connection
+// mongodb connection
 func DBConnection() *mongo.Collection {
 	connection := options.Client().ApplyURI(URI)
 	client, err := mongo.Connect(context.TODO(), connection)
@@ -52,29 +55,46 @@ func DBConnection() *mongo.Collection {
 	return collection
 }
 
-
-//insert a token endpoint
-func handleinsert() gin.HandlerFunc{
-	return func(c *gin.Context){
+// insert a token endpoint
+func handleinsert() gin.HandlerFunc {
+	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-    	var temp DbTest
-        defer cancel()
+		var temp DbTest
+		defer cancel()
 
 		//validate the request body
-        if err := c.BindJSON(&temp); err != nil {
-            c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-            return
-        }
+		if err := c.BindJSON(&temp); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
 		newTemp := DbTest{
 			Token: temp.Token,
 		}
 		_, err1 := mongodb.InsertOne(ctx, newTemp)
 		if err1 != nil {
-            c.JSON(http.StatusInternalServerError, gin.H{"error": err1.Error()})
-            return
-        }
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err1.Error()})
+			return
+		}
 		c.JSON(http.StatusOK, newTemp)
 		fmt.Println("Inserted succesfully")
 	}
-} 
+}
+
+// func handlemany() gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+// 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+// 		defer cancel()
+
+// 		var tempslice = make([]DbTest, 0)
+// 		lines := strings.Split(string(fileBytes), "\n")
+// 		var temp DbTest
+
+// 		//validating many
+// 		if err := c.BindJSON(&tempslice); err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{" error": err.Error()})
+// 			return
+// 		}
+
+// 	}
+// }

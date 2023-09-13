@@ -20,7 +20,7 @@ func main() {
 		}
 
 		// Modify the JSON data
-		requestBody["message"] = "Modified: " + requestBody["message"].(string)
+		// requestBody["message"] = "Modified: " + requestBody["message"].(string)
 
 		// Send the modified JSON as a response
 		c.JSON(http.StatusOK, requestBody)
@@ -28,3 +28,4 @@ func main() {
 
 	r.Run(":8080")
 }
+

@@ -2,9 +2,9 @@ import http from 'k6/http';
 import {check} from 'k6';
 
 
-const options = {
-    vus : 1,
-    iterations : 1
+export const options = {
+    vus : 100,
+    iterations : 1000000,
 }
 
 export default function(){

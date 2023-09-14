@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-option go_package = "github.com/umamaheswari76/performance_testing_k6/grpc.k6.test";
+option go_package = "github.com/umamaheswari76/performance_testing_k6/grpc_test";
 
-package profile;
+package grpc_test;
 
-service GrpcK6TestService{
+service GrpcTestService{
     rpc CreateProfile (Profile) returns (ProfileResponse);
 }
 
